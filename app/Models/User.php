@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -17,10 +17,11 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    // Best Practice: Definisikan fillable untuk keamanan (Mass Assignment Protection)
     protected $fillable = [
-        'name',
-        'email',
+        'username',
         'password',
+        'hak_akses',
     ];
 
     /**
@@ -44,5 +45,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Dokumentasi: User dapat menginput banyak jenis tarif.
+     */
+    public function tariffs(): HasMany
+    {
+        return $this->hasMany(ElectricityTariff::class);
     }
 }

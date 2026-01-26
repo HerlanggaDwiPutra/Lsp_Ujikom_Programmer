@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         // saat perintah --seed diketik.
         $this->call([
             EmployeeSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
