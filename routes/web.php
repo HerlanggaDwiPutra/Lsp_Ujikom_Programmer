@@ -20,3 +20,9 @@ Route::post('/process', [SortingController::class, 'process'])->name('sorting.pr
 
 // Download File (GET file berdasarkan ID)
 Route::get('/download/{id}', [SortingController::class, 'download'])->name('sorting.download');
+
+// routes/aplkasi penggajian
+use App\Http\Controllers\PayrollController;
+
+Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll.index');
+Route::post('/payroll/calculate', [PayrollController::class, 'calculate'])->name('payroll.calculate');
