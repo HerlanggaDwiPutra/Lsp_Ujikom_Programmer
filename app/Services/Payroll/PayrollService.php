@@ -40,7 +40,7 @@ class PayrollService
         $strategy = $this->getStrategy($employee->role);
 
         // 2. Hitung Tahun Masuk Kerja
-        $yearsOfService = (int) now()->diffInYears($employee->join_date);
+        $yearsOfService = (int) $employee->join_date->diffInYears(now());
 
         // 3. Eksekusi Perhitungan (Polymorphism)
         $finalSalary = $strategy->calculate((float)$employee->base_salary, $inputData, $yearsOfService);

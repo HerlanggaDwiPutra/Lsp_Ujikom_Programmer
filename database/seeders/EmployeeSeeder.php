@@ -48,7 +48,16 @@ class EmployeeSeeder extends Seeder
             'base_salary' => 4000000,
         ]);
 
-        // 5. Manajer (Gaji Pokok + Bonus Penjualan)
+        // 5. Administrasi Junior (>3 Tahun, Tunjangan 1%)
+        Employee::create([
+            'nip' => 'ADM003',
+            'name' => 'Herlangga (Admin Junior)',
+            'role' => 'admin',
+            'join_date' => '2022-01-01', // Masih baru
+            'base_salary' => 4000000,
+        ]);
+
+        // 6. Manajer (Gaji Pokok + Bonus Penjualan)
         Employee::create([
             'nip' => 'MGR001',
             'name' => 'Pak Bos (Manajer)',

@@ -1,28 +1,92 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Slip Gaji - {{ $employee->nip }}</title>
     <style>
-        body { font-family: sans-serif; color: #333; }
-        .container { width: 100%; padding: 20px; }
-        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
-        .header h1 { margin: 0; font-size: 24px; text-transform: uppercase; }
-        .header p { margin: 5px 0; font-size: 12px; }
+        body {
+            font-family: sans-serif;
+            color: #333;
+        }
 
-        .info-table { width: 100%; margin-bottom: 20px; }
-        .info-table td { padding: 5px; }
-        .label { font-weight: bold; width: 150px; }
+        .container {
+            width: 100%;
+            padding: 20px;
+        }
 
-        .salary-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .salary-table th, .salary-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        .salary-table th { background-color: #f4f4f4; }
-        .total-row { background-color: #333; color: #fff; font-weight: bold; }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
 
-        .footer { margin-top: 50px; text-align: right; }
-        .signature-box { display: inline-block; text-align: center; width: 200px; }
-        .signature-line { border-bottom: 1px solid #000; margin-top: 60px; }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        .info-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .info-table td {
+            padding: 5px;
+        }
+
+        .label {
+            font-weight: bold;
+            width: 150px;
+        }
+
+        .salary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .salary-table th,
+        .salary-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .salary-table th {
+            background-color: #f4f4f4;
+        }
+
+        .total-row {
+            background-color: #333;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: right;
+        }
+
+        .signature-box {
+            display: inline-block;
+            text-align: center;
+            width: 200px;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #000;
+            margin-top: 60px;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -77,14 +141,14 @@
                         Tunjangan / Bonus / Lembur
                         <br>
                         <small style="color: #666;">
-                            @if($employee->role == 'satpam')
+                            @if ($employee->role == 'satpam')
                                 (Lembur: {{ $inputVars['overtime_hours'] ?? 0 }} Jam)
                             @elseif($employee->role == 'sales')
                                 (Pelanggan: {{ $inputVars['total_customers'] ?? 0 }} Orang)
                             @elseif($employee->role == 'manager')
                                 (Pertumbuhan: {{ $inputVars['sales_growth_percentage'] ?? 0 }}%)
                             @elseif($employee->role == 'admin')
-                                (Masa Kerja: {{ now()->diffInYears($employee->join_date) }} Tahun)
+                                (Masa Kerja: {{ $employee->join_date->diffInYears(now()) }} Tahun)
                             @endif
                         </small>
                     </td>
@@ -109,4 +173,5 @@
         </div>
     </div>
 </body>
+
 </html>
