@@ -25,8 +25,14 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // --- 2. Modul Pengurutan Angka ---
 Route::prefix('sorting')->name('sorting.')->group(function () {
+    // Hasil name: sorting.index
     Route::get('/', [SortingController::class, 'index'])->name('index');
+
+    // Hasil name: sorting.process
     Route::post('/process', [SortingController::class, 'process'])->name('process');
+
+    // PERBAIKAN DI SINI (Hapus 'sorting.' karena sudah ada di grup)
+    // Hasil name: sorting.download
     Route::get('/download/{id}', [SortingController::class, 'download'])->name('download');
 });
 

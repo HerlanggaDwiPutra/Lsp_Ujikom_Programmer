@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SortingHistory extends Model
+class SortingTask extends Model
 {
-    // Izinkan semua kolom diisi
     protected $guarded = [];
 
-    // Casting agar otomatis jadi JSON saat simpan/baca
+    // Casting otomatis JSON ke Array (Best Practice)
     protected $casts = [
         'input_numbers' => 'array',
         'sorted_numbers' => 'array',
