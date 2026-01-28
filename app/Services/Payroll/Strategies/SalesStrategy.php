@@ -1,15 +1,14 @@
 <?php
-
-// app/Services/Payroll/Strategies/SalesStrategy.php
 namespace App\Services\Payroll\Strategies;
 
 class SalesStrategy implements SalaryStrategyInterface
 {
-    public function calculate(float $baseSalary, array $data, int $yearsOfService): float
+    public function calculate(float $baseSalary, array $inputData, int $yearsOfService): float
     {
-        $customers = $data['total_customers'] ?? 0;
+        // Komisi = jumlah pelanggan * 50.000
+        $totalCustomers = $inputData['total_customers'] ?? 0;
+        $commission = $totalCustomers * 50000;
 
-        // Rumus: Gaji + (Pelanggan * 50.000)
-        return $baseSalary + ($customers * 50000);
+        return $baseSalary + $commission;
     }
 }

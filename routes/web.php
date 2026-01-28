@@ -7,6 +7,7 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\ElectricityTariffController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\EmployeeController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -36,12 +37,19 @@ Route::prefix('sorting')->name('sorting.')->group(function () {
     Route::get('/download/{id}', [SortingController::class, 'download'])->name('download');
 });
 
-// --- 3. Modul Penggajian ---
+/// --- 3. Modul Penggajian (REVISI STRUKTUR) ---
 Route::prefix('payroll')->name('payroll.')->group(function () {
-    Route::get('/', [PayrollController::class, 'index'])->name('index');
-    Route::post('/calculate', [PayrollController::class, 'calculate'])->name('calculate');
-});
 
+    // A. Halaman Hitung Gaji (Tetap)
+    Route::get('/calculate', [PayrollController::class, 'index'])->name('index');
+    Route::post('/calculate', [PayrollController::class, 'calculate'])->name('calculate');
+
+    // B. CRUD Data Pegawai (Baru)
+    // URL: /payroll/pegawai
+    Route::resource('pegawai', EmployeeController::class)->parameters([
+        'pegawai' => 'employee'
+    ]);
+});
 // --- 4. Modul Data Listrik (CRUD) ---
 // Menggunakan Resource Controller agar efisien (Best Practice)
 Route::prefix('listrik')->name('listrik.')->group(function () {

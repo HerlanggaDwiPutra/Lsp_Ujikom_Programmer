@@ -1,177 +1,168 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
     <title>Slip Gaji - {{ $employee->nip }}</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
             color: #333;
         }
-
-        .container {
-            width: 100%;
-            padding: 20px;
-        }
-
         .header {
             text-align: center;
             border-bottom: 2px solid #000;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
-
         .header h1 {
             margin: 0;
-            font-size: 24px;
             text-transform: uppercase;
+            font-size: 24px;
         }
-
         .header p {
-            margin: 5px 0;
+            margin: 5px 0 0;
             font-size: 12px;
         }
-
         .info-table {
             width: 100%;
             margin-bottom: 20px;
         }
-
         .info-table td {
             padding: 5px;
         }
-
-        .label {
-            font-weight: bold;
-            width: 150px;
-        }
-
         .salary-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-
-        .salary-table th,
-        .salary-table td {
+        .salary-table th, .salary-table td {
             border: 1px solid #ddd;
             padding: 10px;
-            text-align: left;
         }
-
         .salary-table th {
             background-color: #f4f4f4;
+            text-align: left;
         }
-
-        .total-row {
-            background-color: #333;
-            color: #fff;
+        .text-right {
+            text-align: right;
+        }
+        .text-bold {
             font-weight: bold;
         }
-
         .footer {
             margin-top: 50px;
             text-align: right;
-        }
-
-        .signature-box {
-            display: inline-block;
-            text-align: center;
-            width: 200px;
-        }
-
-        .signature-line {
-            border-bottom: 1px solid #000;
-            margin-top: 60px;
+            font-size: 12px;
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>PT. ARGO INDUSTRI</h1>
-            <p>Jalan Teknologi No. 12, Jakarta Selatan, Indonesia</p>
-            <p>Telp: (021) 555-7777 | Email: hr@argoindustri.com</p>
-        </div>
 
-        <h2 style="text-align: center; text-decoration: underline;">SLIP GAJI KARYAWAN</h2>
+    <div class="header">
+        <h1>PT. ARGO INDUSTRI</h1>
+        <p>Jalan Raya Industri No. 123, Bogor - Indonesia</p>
+        <p>Telp: (021) 12345678 | Email: hrd@argoindustri.com</p>
+    </div>
 
-        <table class="info-table">
+    <h2 style="text-align: center; margin-bottom: 30px;">SLIP GAJI PEGAWAI</h2>
+
+    <table class="info-table">
+        <tr>
+            <td width="20%"><strong>NIP</strong></td>
+            <td width="30%">: {{ $employee->nip }}</td>
+            <td width="20%"><strong>Jabatan</strong></td>
+            <td width="30%">: {{ ucfirst($employee->role) }}</td>
+        </tr>
+        <tr>
+            <td><strong>Nama</strong></td>
+            <td>: {{ $employee->name }}</td>
+            <td><strong>Tahun Masuk</strong></td>
+            <td>: {{ $employee->join_year }}</td>
+        </tr>
+        <tr>
+            <td><strong>Periode</strong></td>
+            <td>: {{ $slip->generated_at->format('F Y') }}</td>
+            <td><strong>Lama Kerja</strong></td>
+            <td>: {{ $slip->years_of_service }} Tahun</td>
+        </tr>
+    </table>
+
+    <table class="salary-table">
+        <thead>
             <tr>
-                <td class="label">NIP</td>
-                <td>: {{ $employee->nip }}</td>
-                <td class="label">Periode</td>
-                <td>: {{ now()->format('F Y') }}</td>
+                <th>Keterangan</th>
+                <th class="text-right">Nominal (Rp)</th>
             </tr>
+        </thead>
+        <tbody>
             <tr>
-                <td class="label">Nama</td>
-                <td>: {{ $employee->name }}</td>
-                <td class="label">Tanggal Cetak</td>
-                <td>: {{ now()->format('d-m-Y') }}</td>
+                <td>Gaji Pokok</td>
+                <td class="text-right">{{ number_format($slip->base_salary, 0, ',', '.') }}</td>
             </tr>
-            <tr>
-                <td class="label">Jabatan</td>
-                <td>: {{ strtoupper($employee->role) }}</td>
-                <td class="label">Tgl Bergabung</td>
-                <td>: {{ \Carbon\Carbon::parse($employee->join_date)->format('d-m-Y') }}</td>
-            </tr>
-        </table>
 
-        <table class="salary-table">
-            <thead>
-                <tr>
-                    <th>Keterangan</th>
-                    <th style="text-align: right;">Jumlah (IDR)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Gaji Pokok</td>
-                    <td style="text-align: right;">{{ number_format($employee->base_salary, 0, ',', '.') }}</td>
-                </tr>
+            @php
+                // Ambil detail input dari kolom 'details' (dulu input_variables)
+                $details = $slip->details ?? [];
+                $role = $employee->role;
+            @endphp
 
-                @php
-                    $inputVars = $slip->input_variables;
-                    $bonusAmount = $slip->final_salary - $employee->base_salary;
-                @endphp
-
+            @if($role === 'satpam' && isset($details['overtime_hours']))
                 <tr>
                     <td>
-                        Tunjangan / Bonus / Lembur
-                        <br>
-                        <small style="color: #666;">
-                            @if ($employee->role == 'satpam')
-                                (Lembur: {{ $inputVars['overtime_hours'] ?? 0 }} Jam)
-                            @elseif($employee->role == 'sales')
-                                (Pelanggan: {{ $inputVars['total_customers'] ?? 0 }} Orang)
-                            @elseif($employee->role == 'manager')
-                                (Pertumbuhan: {{ $inputVars['sales_growth_percentage'] ?? 0 }}%)
-                            @elseif($employee->role == 'admin')
-                                (Masa Kerja: {{ $employee->join_date->diffInYears(now()) }} Tahun)
-                            @endif
-                        </small>
+                        Honor Lembur <br>
+                        <small>({{ $details['overtime_hours'] }} jam x Rp 20.000)</small>
                     </td>
-                    <td style="text-align: right;">{{ number_format($bonusAmount, 0, ',', '.') }}</td>
+                    <td class="text-right">
+                        {{ number_format($details['overtime_hours'] * 20000, 0, ',', '.') }}
+                    </td>
                 </tr>
-
-                <tr class="total-row">
-                    <td>TOTAL DITERIMA (TAKE HOME PAY)</td>
-                    <td style="text-align: right;">Rp {{ number_format($slip->final_salary, 0, ',', '.') }}</td>
+            @elseif($role === 'sales' && isset($details['total_customers']))
+                <tr>
+                    <td>
+                        Komisi Penjualan <br>
+                        <small>({{ $details['total_customers'] }} pelanggan x Rp 50.000)</small>
+                    </td>
+                    <td class="text-right">
+                        {{ number_format($details['total_customers'] * 50000, 0, ',', '.') }}
+                    </td>
                 </tr>
-            </tbody>
-        </table>
+            @elseif($role === 'manager' && isset($details['sales_growth_percentage']))
+                <tr>
+                    <td>
+                        Bonus Kinerja <br>
+                        <small>(Peningkatan Penjualan: {{ $details['sales_growth_percentage'] }}%)</small>
+                    </td>
+                    <td class="text-right">
+                        {{ number_format($slip->final_salary - $slip->base_salary, 0, ',', '.') }}
+                    </td>
+                </tr>
+            @elseif($role === 'admin')
+                <tr>
+                    <td>
+                        Tunjangan Masa Kerja <br>
+                        <small>({{ $slip->years_of_service }} Tahun)</small>
+                    </td>
+                    <td class="text-right">
+                        {{ number_format($slip->final_salary - $slip->base_salary, 0, ',', '.') }}
+                    </td>
+                </tr>
+            @endif
 
-        <div class="footer">
-            <div class="signature-box">
-                <p>Jakarta, {{ now()->format('d F Y') }}</p>
-                <br>
-                <p>Mengetahui, <br>HRD Manager</p>
-                <div class="signature-line"></div>
-                <p>( ................................. )</p>
-            </div>
-        </div>
+            <tr style="background-color: #f9f9f9;">
+                <td class="text-bold">TOTAL GAJI DITERIMA</td>
+                <td class="text-right text-bold" style="font-size: 16px;">
+                    Rp {{ number_format($slip->final_salary, 0, ',', '.') }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>Dicetak pada: {{ now()->format('d F Y H:i') }}</p>
+        <br><br><br>
+        <p>( Bagian Keuangan )</p>
     </div>
-</body>
 
+</body>
 </html>

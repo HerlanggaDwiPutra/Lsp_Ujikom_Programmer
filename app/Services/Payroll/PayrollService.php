@@ -40,20 +40,23 @@ class PayrollService
         $strategy = $this->getStrategy($employee->role);
 
         // 2. Hitung Tahun Masuk Kerja
-        $yearsOfService = (int) $employee->join_date->diffInYears(now());
+        $yearsOfService = (int) date('Y') - $employee->join_year;
 
-        // 3. Eksekusi Perhitungan (Polymorphism)
+        // 3. Eksekusi Perhitungan
         $finalSalary = $strategy->calculate((float)$employee->base_salary, $inputData, $yearsOfService);
 
-        // 4. Simpan ke Database
+        // 4. Simpan ke Database (UPDATE DI SINI)
         $slip = SalarySlip::create([
             'employee_id' => $employee->id,
-            'input_variables' => $inputData,
+
+            // Simpan data snapshot agar sejarah gaji akurat meskipun data pegawai berubah nanti
+            'base_salary' => $employee->base_salary,
+            'years_of_service' => $yearsOfService,
+
+            'details' => $inputData, // Simpan input user (lembur, sales, dll)
             'final_salary' => $finalSalary,
             'generated_at' => now(),
         ]);
-
-        Log::info("Payroll: Sukses. Total Gaji: {$finalSalary}");
 
         return $slip;
     }

@@ -1,24 +1,25 @@
 <?php
-// app/Services/Payroll/Strategies/ManagerStrategy.php
 namespace App\Services\Payroll\Strategies;
 
 class ManagerStrategy implements SalaryStrategyInterface
 {
-    public function calculate(float $baseSalary, array $data, int $yearsOfService): float
+    public function calculate(float $baseSalary, array $inputData, int $yearsOfService): float
     {
-        $growth = $data['sales_growth_percentage'] ?? 0;
+        // Bonus berdasarkan persentase peningkatan penjualan
+        $increase = $inputData['sales_growth_percentage'] ?? 0;
+        $bonusRate = 0;
 
-        // Logika Bonus
-        $bonusPercentage = 0;
-
-        if ($growth > 10) {
-            $bonusPercentage = 0.10;
-        } elseif ($growth >= 6) {
-            $bonusPercentage = 0.05;
-        } elseif ($growth >= 1) {
-            $bonusPercentage = 0.02;
+        if ($increase > 10) {
+            $bonusRate = 0.10; // 10%
+        } elseif ($increase >= 6) { // 6% - 10%
+            $bonusRate = 0.05; // 5%
+        } elseif ($increase >= 1) { // 1% - 5%
+            $bonusRate = 0.02; // 2%
+        } else {
+            $bonusRate = 0;    // < 1%
         }
 
-        return $baseSalary + ($baseSalary * $bonusPercentage);
+        $bonus = $baseSalary * $bonusRate;
+        return $baseSalary + $bonus;
     }
 }

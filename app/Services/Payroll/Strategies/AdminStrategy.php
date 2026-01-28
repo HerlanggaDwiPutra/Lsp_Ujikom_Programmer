@@ -1,23 +1,22 @@
 <?php
-
 namespace App\Services\Payroll\Strategies;
 
 class AdminStrategy implements SalaryStrategyInterface
 {
-    public function calculate(float $baseSalary, array $data, int $yearsOfService): float
+    public function calculate(float $baseSalary, array $inputData, int $yearsOfService): float
     {
-
-        $percentage = 0;
+        // Tunjangan berdasarkan lama kerja
+        $allowanceRate = 0;
 
         if ($yearsOfService >= 5) {
-            // Lama kerja >= 5 tahun: 3% 
-            $percentage = 0.03;
+            $allowanceRate = 0.03; // 3%
         } elseif ($yearsOfService >= 3) {
-            // Lama kerja >= 3 tahun: 1%
-            $percentage = 0.01;
+            $allowanceRate = 0.01; // 1%
+        } else {
+            $allowanceRate = 0;    // < 3 tahun tidak dapat
         }
-        // Kurang dari 3 tahun: 0% (Default)
 
-        return $baseSalary + ($baseSalary * $percentage);
+        $allowance = $baseSalary * $allowanceRate;
+        return $baseSalary + $allowance;
     }
 }

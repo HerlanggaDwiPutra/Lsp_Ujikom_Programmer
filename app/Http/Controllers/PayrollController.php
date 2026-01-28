@@ -1,6 +1,5 @@
 <?php
 
-// app/Http/Controllers/PayrollController.php
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
@@ -9,29 +8,43 @@ use Illuminate\Http\Request;
 
 class PayrollController extends Controller
 {
+    // Inject PayrollService
     public function __construct(protected PayrollService $service) {}
 
+    /**
+     * Halaman Utama Payroll
+     */
     public function index()
     {
-        // Best Practice: Load data pegawai untuk dropdown
+        // Ambil semua data pegawai untuk ditampilkan di dropdown
         $employees = Employee::all();
         return view('payroll.index', compact('employees'));
     }
 
+    /**
+     * Proses Hitung Gaji
+     */
     public function calculate(Request $request)
     {
+        // 1. Validasi Input
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
-            // Validasi dinamis bisa ditambahkan di sini
+            // Validasi input angka (opsional tapi disarankan)
+            'overtime_hours' => 'nullable|numeric|min:0',
+            'total_customers' => 'nullable|numeric|min:0',
+            'sales_growth_percentage' => 'nullable|numeric',
         ]);
 
-        $employee = Employee::find($request->employee_id);
+        // 2. Ambil Data Pegawai
+        $employee = Employee::findOrFail($request->employee_id);
 
-        // Ambil semua input user (jam lembur, jumlah sales, dll)
+        // 3. Ambil Input Variabel (Lembur, Sales, dll)
         $inputData = $request->except(['_token', 'employee_id']);
 
+        // 4. Panggil Service untuk Proses Hitung & Simpan
         $slip = $this->service->processPayroll($employee, $inputData);
 
+        // 5. Generate & Download PDF
         return $this->service->generatePdf($slip);
     }
 }

@@ -1,40 +1,31 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-/**
- * Class SalarySlip
- * Menyimpan riwayat perhitungan gaji yang sudah difinalisasi.
- */
 class SalarySlip extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'employee_id',
-        'input_variables',
+        'base_salary',      // Baru
+        'years_of_service', // Baru
+        'details',          // Ganti input_variables
         'final_salary',
         'generated_at',
     ];
 
-    /**
-     * Casting tipe data.
-     * Penting: 'input_variables' di-cast ke 'array' agar JSON di database
-     * otomatis berubah jadi Array PHP saat diambil.
-     */
     protected $casts = [
-        'input_variables' => 'array', // JSON to Array
-        'final_salary' => 'decimal:2',
+        'details' => 'array', // Auto-convert JSON ke Array
         'generated_at' => 'datetime',
+        'base_salary' => 'decimal:2',
+        'final_salary' => 'decimal:2',
     ];
 
-    /**
-     * Relasi Inverse: Slip gaji milik satu pegawai.
-     */
-    public function employee(): BelongsTo
+    public function employee()
     {
         return $this->belongsTo(Employee::class);
     }
